@@ -1,0 +1,92 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-09-27T12:29:38+02:00",
+    "name": "Unreal Tournament 1999 \u2014 Dedicated Server 469e",
+    "author": "info@wahke.lu",
+    "description": "UT99 Dedicated Server v436 (Linux) + Patch 469e von OldUnreal.",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/parkervcp\/yolks:debian": "ghcr.io\/parkervcp\/yolks:debian"
+    },
+    "file_denylist": [],
+    "startup": ".\/ucc server {{MAP}}?game={{GAME}}?mutator={{MUTATOR}} port={{SERVER_PORT}} ini={{INI_FILE}} log=server.log -nohomedir",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"UdpServerQuery\",\r\n    \"userInteraction\": []\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# ----------------------------------------------------------\r\n# Pterodactyl Egg Installer Script\r\n# Copyright (c) 2021\u20132025 wahke.lu\r\n# Minimum Panel Version: 1.11.11\r\n# Script Version: v1\r\n# ----------------------------------------------------------\r\nset -eu\r\n# ========== LOG ==========\r\nLOG=\"\/mnt\/server\/install.log\"\r\n: > \"$LOG\"\r\n# ========== LOG ==========\r\n# ===== Einstellungen =====\r\n\r\nNAME=\"UT99 v469e\"\r\nVERSION=\"v0.0.5\"\r\nYEAR=\"2021-2025\"\r\n\r\nTOTAL_STEPS=9   # Anzahl der Schritte +3\r\nSTEP=0\r\n\r\nAPK_BASE=\"curl wget ca-certificates grep sed coreutils\"\r\nREQUIRE_APK=\"tar xz unzip bzip2 p7zip gzip\"\r\n\r\nINSTALL=\"Installation abgeschlossen.\"\r\nLOG2=\"Hinweis: volle Logs siehe $LOG\"\r\n\r\nHR=\"------------------------------------------------\"\r\n\r\n# ===== Einstellungen =====\r\n# ===== Progress-Bar ======\r\nprogress_bar() {\r\n  label=\"$1\"\r\n  width=34\r\n  filled=$(( STEP * width \/ TOTAL_STEPS ))\r\n  empty=$(( width - filled ))\r\n  i=1; fill=\"\"; while [ $i -le $filled ]; do fill=\"$fill#\"; i=$((i+1)); done\r\n  i=1; emp=\"\";  while [ $i -le $empty  ]; do emp=\"$emp \";  i=$((i+1)); done\r\n  percent=$(( STEP * 100 \/ TOTAL_STEPS ))\r\n  printf \"\\r[%s%s] %3d%%  %s\" \"$fill\" \"$emp\" \"$percent\" \"$label\"\r\n}\r\nrun_step() {\r\n  label=\"$1\"; shift\r\n  STEP=$((STEP+1))\r\n  progress_bar \"$label\"\r\n  sh -lc \"$*\" >>\"$LOG\" 2>&1\r\n  progress_bar \"$label \u2713\"\r\n  printf \"\\n\"\r\n}\r\nrun_block() {\r\n  label=\"$1\"\r\n  STEP=$((STEP+1))\r\n  progress_bar \"$label\"\r\n  sh -s >>\"$LOG\" 2>&1\r\n  progress_bar \"$label \u2713\"\r\n  printf \"\\n\"\r\n}\r\n# ===== Progress-Bar ======\r\n# ==== Banner-Funktion ====\r\nif [[ -t 1 ]] && command -v tput >\/dev\/null 2>&1 && [[ $(tput colors) -ge 8 ]] && [[ -z \"${NO_COLOR:-}\" ]]; then\r\n  BOLD=\"$(tput bold)\"; DIM=\"$(tput dim)\"; RESET=\"$(tput sgr0)\"\r\n  RED=\"$(tput setaf 1)\"; GREEN=\"$(tput setaf 2)\"; YELLOW=\"$(tput setaf 3)\"\r\n  BLUE=\"$(tput setaf 4)\"; MAGENTA=\"$(tput setaf 5)\"; CYAN=\"$(tput setaf 6)\"; WHITE=\"$(tput setaf 7)\"\r\nelse\r\n  BOLD=\"\"; DIM=\"\"; RESET=\"\"; RED=\"\"; GREEN=\"\"; YELLOW=\"\"; BLUE=\"\"; MAGENTA=\"\"; CYAN=\"\"; WHITE=\"\"\r\nfi\r\nbanner() {\r\n  printf '%s\\n' \"$HR\"\r\n  printf '%b\\n' \"${CYAN}${BOLD}    \u2588\u2588     \u2588\u2588  \u2588\u2588\u2588\u2588\u2588  \u2588\u2588   \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588 ${RESET}\"\r\n  printf '%b\\n' \"${CYAN}${BOLD}    \u2588\u2588     \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588  \u2588\u2588  \u2588\u2588      ${RESET}\"\r\n  printf '%b\\n' \"${CYAN}${BOLD}    \u2588\u2588  \u2588  \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588   \u2588\u2588\u2588\u2588\u2588   ${RESET}\"\r\n  printf '%b\\n' \"${CYAN}${BOLD}    \u2588\u2588 \u2588\u2588\u2588 \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588  \u2588\u2588  \u2588\u2588      ${RESET}\"\r\n  printf '%b\\n' \"${CYAN}${BOLD}     \u2588\u2588\u2588 \u2588\u2588\u2588  \u2588\u2588   \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588   \u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588 ${RESET}\"\r\n  printf '%s\\n' \" \"\r\n  printf '%b\\n' \"${DIM}Copyright (c) ${YEAR} wahke.lu${RESET}\"\r\n  printf '%b\\n' \"Script Version : ${YELLOW}${VERSION}${RESET}\"\r\n  printf '%s\\n' \"$HR\"\r\n  printf '%b\\n' \"${BOLD}Starte ${NAME} Installation...${RESET}\"\r\n  printf '%b\\n' \"(Details: ${MAGENTA}${LOG:-\/var\/log\/vcmp-install.log}${RESET})\"\r\n  printf '%s\\n' \"$HR\"\r\n  printf '%s\\n' \" \"\r\n}\r\nbanner\r\n# ==== Banner-Funktion ====\r\n# === Standard Schritte ===\r\nrun_step \"Serververzeichnis leeren\" \\\r\n  \"mkdir -p \/mnt\/server && find \/mnt\/server -mindepth 1 -exec rm -rf {} +\"\r\nrun_step \"Pakete installieren\" \\\r\n  \"apk add --no-cache ${APK_BASE} ${REQUIRE_APK} >\/dev\/null\"\r\nrun_step \"Verzeichnisse vorbereiten\" \\\r\n  \"mkdir -p \/mnt\/server\"\r\ncd \/mnt\/server\r\n# === Standard Schritte ===\r\n# = Installation Schritte =\r\n\r\n\r\n# 4) Basis-Server herunterladen & entpacken (Mirror-Fallback)\r\nrun_block \"Server herunterladen & entpacken\" <<'SH'\r\nset -eu\r\nBASE_TARBALL=\"${BASE_TARBALL:-ut-server-linux-436.tar.gz}\"\r\nPATCH_TAG=\"${PATCH_TAG:-auto}\"\r\nPATCH_CHANNEL=\"${PATCH_CHANNEL:-stable}\"\r\nPATCH_ARCH=\"${PATCH_ARCH:-}\"\r\n\r\nfor URL in \\\r\n  \"https:\/\/ut-files.com\/Entire_Server_Download\/${BASE_TARBALL}\" \\\r\n  \"https:\/\/www.ut-files.com\/Entire_Server_Download\/${BASE_TARBALL}\"\r\ndo\r\n  if curl -fL -o \"${BASE_TARBALL}\" \"${URL}\"; then\r\n    echo \"[OK] ${URL}\"\r\n    break\r\n  else\r\n    echo \"[WARN] Mirror nicht erreichbar: ${URL}\"\r\n  fi\r\ndone\r\n\r\n[ -f \"${BASE_TARBALL}\" ] || { echo \"[FEHLER] ${BASE_TARBALL} konnte nicht geladen werden.\"; exit 1; }\r\n\r\ncase \"${BASE_TARBALL}\" in\r\n  *.tar.gz|*.tgz) tar -xzf \"${BASE_TARBALL}\" ;;\r\n  *.tar.bz2)      tar -xjf \"${BASE_TARBALL}\" ;;\r\n  *.zip)          unzip -q \"${BASE_TARBALL}\" ;;\r\n  *)              echo \"[FEHLER] Unbekanntes Archivformat: ${BASE_TARBALL}\"; exit 1 ;;\r\nesac\r\n\r\n# Inhalte ggf. aus Unterordner hochziehen (inkl. Dotfiles)\r\nif [ ! -d System ]; then\r\n  ROOT=\"$(find . -maxdepth 2 -type d -name System -print -quit | sed 's|\/System||')\"\r\n  if [ -n \"${ROOT}\" ] && [ \"${ROOT}\" != \".\" ]; then\r\n    echo \"[UT99] Verschiebe Inhalte aus ${ROOT}\/* nach \/mnt\/server\"\r\n    find \"${ROOT}\" -mindepth 1 -maxdepth 1 -exec mv -f \"{}\" . \\; 2>\/dev\/null || true\r\n    rm -rf \"${ROOT}\"\r\n  fi\r\nfi\r\nSH\r\n\r\n# 5) Patch ermitteln, laden & entpacken\r\nrun_block \"Patch ermitteln & installieren\" <<'SH'\r\nset -eu\r\n\r\nBASE_TARBALL=\"${BASE_TARBALL:-ut-server-linux-436.tar.gz}\"\r\nPATCH_TAG=\"${PATCH_TAG:-auto}\"\r\nPATCH_CHANNEL=\"${PATCH_CHANNEL:-stable}\"\r\nPATCH_ARCH=\"${PATCH_ARCH:-}\"\r\n\r\n# Architektur automatisch bestimmen, falls nicht gesetzt\r\nif [ -z \"${PATCH_ARCH:-}\" ]; then\r\n  ARCH=\"$(uname -m 2>\/dev\/null || echo unknown)\"\r\n  case \"${ARCH}\" in\r\n    x86_64|amd64)   PATCH_ARCH=\"Linux-amd64\" ;;\r\n    i386|i686)      PATCH_ARCH=\"Linux-x86\" ;;\r\n    aarch64|arm64)  PATCH_ARCH=\"Linux-arm64\" ;;\r\n    *)              PATCH_ARCH=\"Linux-amd64\"; echo \"[WARN] Unbekannte Architektur ${ARCH} \u2192 nutze ${PATCH_ARCH}\";;\r\n  esac\r\nfi\r\n\r\n# Patch-Tag bestimmen\r\nif [ \"${PATCH_TAG:-auto}\" = \"auto\" ]; then\r\n  if [ \"${PATCH_CHANNEL:-stable}\" = \"rc\" ]; then\r\n    PATCH_TAG=\"$(\r\n      curl -fsSL https:\/\/github.com\/OldUnreal\/UnrealTournamentPatches\/releases \\\r\n      | grep -o '\/OldUnreal\/UnrealTournamentPatches\/releases\/tag\/v[0-9A-Za-z._-]*' \\\r\n      | grep 'rc[0-9]\\+' \\\r\n      | head -n1 \\\r\n      | awk -F'\/tag\/' '{print $2}'\r\n    )\"\r\n  else\r\n    TAG_URL=\"$(curl -fsSL -o \/dev\/null -w '%{url_effective}' \\\r\n      https:\/\/github.com\/OldUnreal\/UnrealTournamentPatches\/releases\/latest || true)\"\r\n    PATCH_TAG=\"$(printf '%s' \"${TAG_URL}\" | awk -F'\/tag\/' '{print $2}' | tr -d '\\r\\n')\"\r\n  fi\r\nfi\r\n\r\n[ -n \"${PATCH_TAG:-}\" ] || { echo \"[FEHLER] Konnte PATCH_TAG nicht bestimmen.\"; exit 1; }\r\n\r\nVER_FULL=\"${PATCH_TAG#v}\"                                   # z.B. 469e-rc9 oder 469d\r\nVER_FILE=\"$(printf '%s' \"${VER_FULL}\" | sed 's\/-.*$\/\/')\"    # z.B. 469e\r\nBASE_DL=\"https:\/\/github.com\/OldUnreal\/UnrealTournamentPatches\/releases\/download\/${PATCH_TAG}\"\r\n\r\nASSET_URL=\"\"\r\nASSET_FILE=\"\"\r\nfor FN in \\\r\n  \"OldUnreal-UTPatch${VER_FULL}-${PATCH_ARCH}.tar.bz2\" \\\r\n  \"OldUnreal-UTPatch${VER_FILE}-${PATCH_ARCH}.tar.bz2\" \\\r\n  \"OldUnreal-UTPatchv${VER_FILE}-${PATCH_ARCH}.tar.bz2\" \\\r\n  \"OldUnreal-UTPatch${PATCH_TAG}-${PATCH_ARCH}.tar.bz2\"\r\ndo\r\n  URL=\"${BASE_DL}\/${FN}\"\r\n  if curl -IfsL \"${URL}\" >\/dev\/null; then\r\n    ASSET_URL=\"${URL}\"; ASSET_FILE=\"${FN}\"; break\r\n  else\r\n    echo \"[INFO] Nicht gefunden: ${URL}\"\r\n  fi\r\ndone\r\n\r\n[ -n \"${ASSET_URL}\" ] || {\r\n  echo \"[FEHLER] Kein Patch-Asset gefunden.\"\r\n  echo \"        TAG=${PATCH_TAG}  ARCH=${PATCH_ARCH}\"\r\n  exit 1\r\n}\r\n\r\necho \"[UT99] Lade Patch ${PATCH_TAG} (${PATCH_ARCH})\"\r\necho \"[UT99] \u2192 ${ASSET_URL}\"\r\ncurl -fL --progress-bar -o patch.tar.bz2 \"${ASSET_URL}\"\r\ntar -xjf patch.tar.bz2 -C \/mnt\/server\r\nrm -f patch.tar.bz2 \"${BASE_TARBALL:-}\"\r\nSH\r\n\r\n# 6) Bonus Package Downloaden & Entpacken\r\nrun_block \"Bonus Package herunterladen & entpacken\" <<'SH'\r\nset -eu\r\nwget https:\/\/github.com\/wahke\/Pterodactyl-Egg-s\/raw\/refs\/heads\/main\/stuff\/UT99\/maps\/UTBonusPack.zip\r\nunzip -o UTBonusPack.zip -d \/mnt\/server\r\nrm -f UTBonusPack.zip\r\nSH\r\n\r\n# 7) ucc-Link\r\nrun_block \"ucc Symlink anlegen\" <<'SH'\r\nset -eu\r\nrm -f \/mnt\/server\/ucc 2>\/dev\/null || true\r\nif [ -x \/mnt\/server\/System64\/ucc-bin ]; then\r\n  ln -s .\/System64\/ucc-bin \/mnt\/server\/ucc\r\nelif [ -x \/mnt\/server\/System\/ucc-bin ]; then\r\n  ln -s .\/System\/ucc-bin \/mnt\/server\/ucc\r\nfi\r\nSH\r\n\r\n# 8) Minimal-INI\r\nrun_block \"Minimal-INI erzeugen (falls fehlt)\" <<'SH'\r\nset -eu\r\nINI=\"\/mnt\/server\/System64\/UnrealTournament.ini\"\r\n[ -f \"$INI\" ] || INI=\"\/mnt\/server\/System\/UnrealTournament.ini\"\r\n[ -f \"$INI\" ] || {\r\n  mkdir -p \/mnt\/server\/System \/mnt\/server\/System64\r\n  cat > \"$INI\" <<'EOF'\r\n[URL]\r\nProtocol=unreal\r\nName=Player\r\nMap=Index.unr\r\nLocalMap=CityIntro.unr\r\n\r\n[UWeb.WebServer]\r\nbEnabled=False\r\nListenPort=5080\r\nEOF\r\n}\r\nSH\r\n\r\n# 9) Rechte\r\nrun_step \"Pterodactyl-Standardrechte\" \\\r\n  \"chown -R 1000:1000 \/mnt\/server || true; chmod 755 \/mnt\/server || true\"\r\n\r\n# = Installation Schritte =\r\n\r\necho \" \"\r\necho \"$HR\"\r\necho \"$INSTALL\"\r\necho \"$LOG2\"",
+            "container": "quay.io\/matthewp\/pterodactyl:alpine-install",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Map",
+            "description": "Startmap ohne .unr",
+            "env_variable": "MAP",
+            "default_value": "DM-Fetid",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Gametype",
+            "description": "z.B. Botpack.DeathMatchPlus, Botpack.CTFGame",
+            "env_variable": "GAME",
+            "default_value": "Botpack.TeamGamePlus",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "8",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:1|max:32",
+            "field_type": "text"
+        },
+        {
+            "name": "INI-Datei",
+            "description": "Pfad relativ zum Serverordner",
+            "env_variable": "INI_FILE",
+            "default_value": "UnrealTournament.ini",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Zus\u00e4tzliche Startargumente",
+            "description": "Freie Flags, z.B. -lanplay, -adminconsole, -http",
+            "env_variable": "EXTRA_ARGS",
+            "default_value": "-lanplay",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:500",
+            "field_type": "text"
+        },
+        {
+            "name": "Mutator",
+            "description": "mutator",
+            "env_variable": "MUTATOR",
+            "default_value": "BotPack.NoRedeemer,BotPack.NoPowerups",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:128",
+            "field_type": "text"
+        }
+    ]
+}
